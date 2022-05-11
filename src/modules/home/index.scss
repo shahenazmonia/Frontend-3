@@ -1,0 +1,115 @@
+/** @TODO it would be better to use less for the styling, we can handle all the color degrees,
+shadows, font sizes, and font weight  in the same file, then importing it wherever we need.
+This way is useful when we need to change a color so all we need to do is changing it from 
+one place 
+**/
+
+.home {
+    .home-wrapper {
+        padding: 21px 100px 0 35px
+    }
+
+    .ant-divider-horizontal {
+        margin: 20px 0 33px 0;
+        color: #F3F6F9;
+        height: 2px;
+        border-top: 1px solid #F3F6F9;
+    }
+
+    .reports-wrapper {
+        .title {
+            font-style: normal;
+            font-weight: 700;
+            font-size: 24px;
+            line-height: 28px;
+
+        }
+
+        .description {
+            font-style: normal;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 19px;
+            color: #7E8299;
+        }
+    }
+
+    .sumbit-btn {
+        background: #005B96;
+        color: white;
+        border-radius: 5px;
+        border: 1px solid #005B96;
+    }
+}
+
+.select-wrapper {
+    height: 32px;
+
+    .ant-select-selector {
+        background: #1BC5BD !important;
+        border: 1px solid #1BC5BD !important;
+        border-radius: 5px !important;
+    }
+
+
+    .ant-select-selection-placeholder {
+        color: white;
+    }
+
+    .ant-select-arrow {
+        color: white;
+    }
+}
+
+.project-select {
+    width: 135px;
+}
+
+.gateway-select {
+    width: 145px;
+}
+
+.date-picker {
+    background: #1BC5BD;
+    border: 1px solid #1BC5BD;
+    border-radius: 5px;
+
+    .ant-picker-suffix {
+        color: white;
+    }
+
+    .ant-picker-clear {
+        color: white;
+        background-color: #1BC5BD;
+    }
+}
+
+.ant-picker-input {
+    input {
+        color: white;
+
+        &::placeholder {
+             color: white;
+        }
+    }
+}
+
+.select-dropdown {
+    background-color: #1BC5BD;
+
+    .ant-select-item {
+        color: white;
+    }
+
+    .ant-select-item-option-active, .ant-select-item-option-selected {
+        background-color: #1BC5BD;
+    }
+}
+
+.ant-select, .ant-select-focused {
+    color: white;
+
+    &::placeholder {
+        color: white;
+    }
+}
