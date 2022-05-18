@@ -2,6 +2,8 @@
     margin-top: 27px;
     background: #F1FAFE;
     padding: 18px 27px 17px 19px;
+    color: #011F4B;
+    border-radius: 10px;
 
     .head {
         margin-bottom: 34px;
@@ -22,4 +24,23 @@
         margin-bottom: 5px;
 
     }
+}
+
+.total-amount-wrapper {
+    margin-top: 27px;
+    padding: 17px 19px;
+    background: #F1FAFE;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 19px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    color: #011F4B;
+}
+
+.chart-wrapper {
+    width: 270px;
+    height: 270px;
+    margin: auto;
+    margin-top: 30px;
 }

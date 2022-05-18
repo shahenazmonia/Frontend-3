@@ -31,10 +31,19 @@ export interface Payment {
   userIds: string;
   modified: string;
   created: string;
+  gatewayTitle?: string;
 }
 
 export interface Report {
   title: string;
   total: number;
   data: Payment[];
+}
+
+export interface Filters {
+  selectedProject: string;
+  selectedGateway: string;
+  startDate: string;
+  endDate: string;
+  hasResult: boolean;
 }
