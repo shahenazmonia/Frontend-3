@@ -13,8 +13,15 @@ import { Sidebar } from "../../components/sidebar";
 import { CaretDownOutlined } from "@ant-design/icons";
 import { getGateways, getPayments, getProjects } from "./api";
 import { Reports } from "./components/report";
-import { Gateway, Payment, PaymentInput, Project, Report } from "./types";
-import { getDataByGroup } from "./utils";
+import {
+  Filters,
+  Gateway,
+  Payment,
+  PaymentInput,
+  Project,
+  Report,
+} from "./types";
+import { getDataByGroup, getGatwayName, getProjectName } from "./utils";
 import { NoReportData } from "./components/no_report_data";
 import { ALL_GATEWAYS, ALL_PROJECTS } from "../../constant";
 
@@ -23,27 +30,38 @@ interface ProjectGroup {
 }
 
 export const Home: FunctionComponent = () => {
-  const [selectedProject, setSelectedProject] = useState<string>("");
-  const [selectedGateway, setSelectedGateway] = useState<string>("");
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
   const [projects, setProjects] = useState<Project[]>([]);
   const [gateways, setGateways] = useState<Gateway[]>([]);
   const [reports, setReports] = useState<Report[]>([]);
+  const [filters, setFilters] = useState<Filters>({
+    selectedProject: "",
+    selectedGateway: "",
+    startDate: "",
+    endDate: "",
+    hasResult: false,
+  });
+  // this is only to update the used state in the report once clicking on generate-report button
+  const [generateReportfilters, setGenerateReportFilters] = useState<Filters>({
+    selectedProject: "",
+    selectedGateway: "",
+    startDate: "",
+    endDate: "",
+    hasResult: false,
+  });
 
   const onProjectChange = (value: string) => {
-    setSelectedProject(value);
+    setFilters({ ...filters, selectedProject: value });
   };
 
   const onGatewayChange = (value: string) => {
-    setSelectedGateway(value);
+    setFilters({ ...filters, selectedGateway: value, hasResult: false });
   };
 
   const onDateChange = (dateString: string, type: string) => {
     if (type == "FROM") {
-      setStartDate(dateString);
+      setFilters({ ...filters, startDate: dateString, hasResult: false });
     } else {
-      setEndDate(dateString);
+      setFilters({ ...filters, endDate: dateString, hasResult: false });
     }
   };
 
@@ -60,22 +78,24 @@ export const Home: FunctionComponent = () => {
   const getReprot = async (values: PaymentInput) => {
     // get payments data from the endpoint
     const payments = await getPayments(values);
-    const groupDataByProject: ProjectGroup = getDataByGroup(payments);
-    const updatedPayments = Object.keys(groupDataByProject).map(
-      (key, index) => {
-        let total = 0;
-        const data = groupDataByProject[key];
-        data.forEach((elm) => {
-          total += elm.amount;
-        });
-        return {
-          title: `Project ${index + 1}`,
-          total,
-          data,
-        };
-      }
-    );
+    const groupDataByProject: ProjectGroup = getDataByGroup(payments, filters);
+    const updatedPayments = Object.keys(groupDataByProject).map((key) => {
+      let total = 0;
+      const data = groupDataByProject[key];
+      const result = data.map((elm) => {
+        total += elm.amount;
+        return elm;
+      });
+      return {
+        title:
+          getProjectName(projects, key) || getGatwayName(gateways, key) || "",
+        total,
+        data: result,
+      };
+    });
     setReports(updatedPayments);
+    setFilters({ ...filters, hasResult: true });
+    setGenerateReportFilters(filters);
   };
 
   useEffect(() => {
@@ -84,14 +104,13 @@ export const Home: FunctionComponent = () => {
   }, []);
 
   const generateReport = () => {
-    if (selectedProject || selectedGateway || startDate || endDate) {
-      getReprot({
-        projectId: selectedProject !== ALL_PROJECTS ? selectedProject : "",
-        gatewayId: selectedGateway !== ALL_GATEWAYS ? selectedGateway : "",
-        from: startDate,
-        to: endDate,
-      });
-    }
+    const { selectedGateway, selectedProject, startDate, endDate } = filters;
+    getReprot({
+      projectId: selectedProject !== ALL_PROJECTS ? selectedProject : "",
+      gatewayId: selectedGateway !== ALL_GATEWAYS ? selectedGateway : "",
+      from: startDate,
+      to: endDate,
+    });
   };
 
   return (
@@ -185,11 +204,12 @@ export const Home: FunctionComponent = () => {
               </Row>
             </Col>
           </Row>
-          {reports.length !== 0 && (
+          {reports.length > 0 && (
             <Reports
               reports={reports}
-              selectedProject={selectedProject}
-              selectedGateway={selectedGateway}
+              filters={generateReportfilters}
+              gateways={gateways}
+              projects={projects}
             />
           )}
           {reports.length == 0 && <NoReportData />}

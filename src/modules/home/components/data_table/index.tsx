@@ -1,38 +1,47 @@
-import React from "react";
-import { Table } from "antd";
-import { Report } from "../../types";
-import { getRoundUp } from "../../utils";
+import React, { useState } from "react";
+import { Row, Table, Typography } from "antd";
+import { Filters, Gateway, Project, Report } from "../../types";
+import { getRoundUp, renderColums } from "../../utils";
+import { ALL_GATEWAYS, ALL_PROJECTS } from "../../../../constant";
 
 interface Props {
   report: Report;
+  gateways: Gateway[];
+  filters: Filters;
 }
 
-export const DataTable = ({ report }: Props) => {
-  const columns = [
-    {
-      title: "Date",
-      dataIndex: "modified",
-      key: "date",
-    },
-    {
-      title: "Gateway",
-      dataIndex: "gatewayId",
-      key: "gateway",
-    },
-    {
-      title: "Transaction ID",
-      dataIndex: "gatewayId",
-      key: "transaction",
-    },
-    {
-      title: "Amount",
-      dataIndex: "amount",
-      key: "amount",
-      render: (value: number) => `${getRoundUp(value, 0)} USD`,
-    },
-  ];
+export const DataTable = ({ report, gateways, filters }: Props) => {
+  const [isExpandable, setIsExpandable] = useState<boolean>(true);
+  const { selectedProject, selectedGateway } = filters;
+  const AreProjectAndGateway =
+    selectedProject !== ALL_PROJECTS && selectedGateway !== ALL_GATEWAYS;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const columns: any = renderColums(filters, gateways);
+
+  const onProjectClick = () => {
+    setIsExpandable(!isExpandable);
+  };
 
   return (
-    <Table columns={columns} dataSource={report.data} pagination={false} />
+    <div onClick={onProjectClick}>
+      {!AreProjectAndGateway && (
+        <Row className="table-field" justify="space-between">
+          <Typography.Text className="text">{report.title}</Typography.Text>
+          <Typography.Text className="text">
+            TOTAL: {getRoundUp(report.total, 4)} USD
+          </Typography.Text>
+        </Row>
+      )}
+      <Row>
+        {isExpandable || AreProjectAndGateway ? (
+          <Table
+            columns={columns}
+            dataSource={report.data}
+            pagination={false}
+          />
+        ) : null}
+      </Row>
+    </div>
   );
 };
