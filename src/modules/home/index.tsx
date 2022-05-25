@@ -21,7 +21,12 @@ import {
   Project,
   Report,
 } from "./types";
-import { getDataByGroup, getGatwayName, getProjectName } from "./utils";
+import {
+  getDataByGroup,
+  getGatwayName,
+  getProjectName,
+  sortDates,
+} from "./utils";
 import { NoReportData } from "./components/no_report_data";
 import { ALL_GATEWAYS, ALL_PROJECTS } from "../../constant";
 
@@ -86,13 +91,15 @@ export const Home: FunctionComponent = () => {
         total += elm.amount;
         return elm;
       });
+
       return {
         title:
           getProjectName(projects, key) || getGatwayName(gateways, key) || "",
         total,
-        data: result,
+        data: sortDates(result),
       };
     });
+
     setReports(updatedPayments);
     setFilters({ ...filters, hasResult: true });
     setGenerateReportFilters(filters);
