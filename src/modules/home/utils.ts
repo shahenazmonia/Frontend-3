@@ -1,5 +1,6 @@
 import { ALL_GATEWAYS, ALL_PROJECTS } from "../../constant";
 import { Filters, Gateway, Payment, Project } from "./types";
+import moment from "moment";
 
 interface Group {
   [key: string]: Payment[];
@@ -97,6 +98,7 @@ export const renderColums = (filters: Filters, gateways: Gateway[]) => {
         title: "Date",
         dataIndex: "modified",
         key: "date",
+        render: (value: string) => moment(value).format("DD  MM  YYYY"),
       },
       {
         title: "Gateway",
@@ -125,6 +127,7 @@ export const renderColums = (filters: Filters, gateways: Gateway[]) => {
       title: "Date",
       dataIndex: "modified",
       key: "date",
+      render: (value: string) => moment(value).format("DD.MM.YYYY"),
     },
     {
       title: "Transaction ID",
@@ -140,4 +143,13 @@ export const renderColums = (filters: Filters, gateways: Gateway[]) => {
       render: (value: number) => `${getRoundUp(value, 0)} USD`,
     },
   ];
+};
+
+export const sortDates = (dates: Payment[]) => {
+  return dates.sort((a, b) => {
+    return (
+      moment(a.modified).toDate().getTime() -
+      moment(b.modified).toDate().getTime()
+    );
+  });
 };
